@@ -1,0 +1,98 @@
+<div id="body">
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-4"></div>
+		<div class="col-md-4 text-center">
+			<img id="burgerPic" class="img-rounded" src="/assets/img/burger.jpg">
+			<br>
+			<h1 id="title">Eat-Da-Burger!!</h1>
+		</div>
+		<div class="col-md-4"></div>
+	</div>
+</div>
+
+<div id="cont1" class="container">
+	<div class="row">
+		<div class="col-md-4 text-left">
+			<h2>Uneaten Burgers</h2>
+			<ul>
+				{{#each burger}}
+					{{#unless devoured}}
+					<li>{{burger_name}}</li>
+					<button class="change-devoured btn-success text-right" data-id="{{id}}" data-newDevoured="{{devoured}}">DEVOURE It!</button>
+					<br>
+					{{/unless}}
+				{{/each}}
+			</ul>
+		</div>
+		
+		<div class="col-md-4"></div>
+		
+		<div class="col-md-4 ">
+			<h2>Devoured Burgers</h2>
+			<ul>
+				{{#each burger}}
+					{{#if devoured}}
+						<li>{{burger_name}} <p>Mmmmmmmm.... DELICIOUS!</p></li>
+					{{/if}}
+				{{/each}}
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-4"></div>
+
+		<div class="col-md-4">
+			<form class="form">
+			  <div class="form-group text-center">
+			      <label for="comment">Add a burger:</label>
+			      <textarea class="form-control" rows="3" id="comment"></textarea>
+			      <button type="submit" class="btn btn-default">Satisfaction Awaits..</button>
+    		  </div>
+  			</form>
+		</div>
+
+		<div class="col-md-4"></div>
+	</div>
+</div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$(".change-devoured").on("click", function(event){
+		var id = $(this).data("id");
+    	var newDevoured = $(this).data("newDevoured");
+    	console.log(newDevoured);
+    	console.log(id);
+    	var eaten = {
+    		devoured: newDevoured
+    	};
+
+    	$.ajax("/api/burgers/" + id, {
+    		type: "PUT",
+    		data: eaten
+    	}).then(function(){
+    		console.log("Devoured is now ", true);
+    		location.reload();
+    	});
+
+	});
+
+	$(".form").on("submit", function(event){
+		event.preventDefault();
+
+		var newBurger = { "addItem": $("#comment").val().trim() };
+
+		$.ajax("/api/burgers", {
+			type: "POST",
+			data: newBurger
+		}).then(function(){
+			location.reload();
+		});
+	});
+});
+</script>
